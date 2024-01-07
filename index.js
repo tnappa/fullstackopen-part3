@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static('dist'))
 
-morgan.token('post-data', function (req, res) { return req.method === 'POST' ? JSON.stringify(req.body) : "" })
+morgan.token('post-data', function (req) { return req.method === 'POST' ? JSON.stringify(req.body) : '' })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
@@ -37,7 +37,7 @@ app.get('/info', (request, response, next) => {
   Person.find({})
     .then(persons => {
       response.send(
-        "Phonebook has info for " + persons.length + " people<br/>" + Date()
+        'Phonebook has info for ' + persons.length + ' people<br/>' + Date()
       )
     })
     .catch(error => next(error))
@@ -45,7 +45,7 @@ app.get('/info', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -69,14 +69,9 @@ app.post('/api/persons', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
-  const person = {
-    name: body.name,
-    number: body.number
-  }
-
   Person.findByIdAndUpdate(
-    request.params.id, 
-    { name, number }, 
+    request.params.id,
+    { name, number },
     { new: true, runValidators: true, context: 'query' }
   )
     .then(result => {
@@ -86,7 +81,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({error: 'unknown endpoint'})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
